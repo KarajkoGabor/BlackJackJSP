@@ -16,33 +16,65 @@ import java.util.Random;
 @WebServlet("/GameServlet")
 public class GameServlet extends HttpServlet {
 
+    private static final String DRAW_CARD_BTN_ID="drawCard";
+    private static final String STOP_GAME_BTN_ID="stop";
+
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
+        String buttonId = request.getParameter("buttonID");
         UserBean user = (UserBean) session.getAttribute("user");
         UserBean userNPC = (UserBean) session.getAttribute("npc");
         int money = user.getMoney();
 
-        user.getCards().add(drawCard());
-        userNPC.getCards().add(drawCard());
 
-        if(!checkCardSumIsUnder21(user.getCards())){
-            user.getCards().clear();
-            user.setMoney(money -= 50);
-            response.getWriter().write("LOSE " + user.getName() + " " + user.getMoney() + " ");
+        if (buttonId.equals(DRAW_CARD_BTN_ID)) {
 
-        }else if(!checkCardSumIsUnder21(userNPC.getCards())){
-            userNPC.getCards().clear();
-            user.setMoney(money += 50);
-            response.getWriter().write("LOSE " + user.getName() + " " + user.getMoney() + " ");
+            user.getCards().add(drawCard());
+            userNPC.getCards().add(drawCard());
 
-        }else if(isUserWinner(user.getCards(),userNPC.getCards())){
-            user.getCards().clear();
-            userNPC.getCards().clear();
-            user.setMoney(money += 50);
-            response.getWriter().write("LOSE " + user.getName() + " " + user.getMoney() + " ");
+            response.getWriter().write("Actual cards " + user.getCards());
+
+            if(!checkCardSumIsUnder21(user.getCards())){
+
+                response.getWriter().write("LOSE " + user );
+                response.getWriter().write("LOSE " + userNPC );
+
+                user.setMoney(money -= 50);
+                user.getCards().clear();
+                userNPC.getCards().clear();
+
+            }else if(!checkCardSumIsUnder21(userNPC.getCards())){
+
+                response.getWriter().write("WIN " + user);
+                response.getWriter().write("WIN " + userNPC);
+
+                user.setMoney(money += 50);
+                user.getCards().clear();
+                userNPC.getCards().clear();
+
+            }
+        }else if(buttonId.equals(STOP_GAME_BTN_ID)){
+            if(isUserWinner(user.getCards(),userNPC.getCards())){
+
+                response.getWriter().write("WIN " + user);
+                response.getWriter().write("WIN " + userNPC);
+
+                user.setMoney(money += 50);
+                user.getCards().clear();
+                userNPC.getCards().clear();
+
+            }else{
+
+                response.getWriter().write("LOSE " + user );
+                response.getWriter().write("LOSE " + userNPC );
+
+                user.setMoney(money -= 50);
+                user.getCards().clear();
+                userNPC.getCards().clear();
+            }
         }
 
     }
@@ -58,7 +90,7 @@ public class GameServlet extends HttpServlet {
     private int drawCard() {
         Random rand = new Random();
 
-        int  n = rand.nextInt(21) + 1;
+        int  n = rand.nextInt(11) + 1;
 
         return n;
 

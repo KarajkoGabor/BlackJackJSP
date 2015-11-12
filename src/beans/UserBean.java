@@ -53,6 +53,16 @@ public class UserBean implements Serializable {
         return cards;
     }
 
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "name='" + name + '\'' +
+                ", money=" + money +
+                ", point=" + point +
+                ", cards=" + cards +
+                '}';
+    }
+
     public void setCards(List<Integer> cards) {
         this.cards = cards;
     }

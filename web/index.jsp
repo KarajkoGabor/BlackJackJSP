@@ -20,7 +20,7 @@
 </jsp:useBean>
 
 
-<h3>Hi ${sessionScope.user.name}, Login successful.</h3>
+<h3>Hi ${sessionScope.user}, Login successful.</h3>
 <br>
 
 <form action="game.jsp" method="POST">
